@@ -1,5 +1,6 @@
 package com.sky.context;
 
+//ThreadLocal存放登录信息
 public class BaseContext {
 
     public static ThreadLocal<Long> threadLocal = new ThreadLocal<>();
