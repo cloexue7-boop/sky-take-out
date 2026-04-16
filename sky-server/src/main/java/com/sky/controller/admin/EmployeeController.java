@@ -95,10 +95,25 @@ public class EmployeeController {
      * @param employeePageQueryDTO
      * @return
      */
+    @ApiOperation("分页查询")
     @GetMapping("/page")
     public Result queryPage(EmployeePageQueryDTO employeePageQueryDTO){
         log.info("员工信息分页查询：{}",employeePageQueryDTO);
         PageResult pageResult= employeeService.queryPage(employeePageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 启用禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用禁用状态修改")
+    public Result changeStatus(@PathVariable Integer status,Long id){
+        log.info("员工状态修改：{}，id:{}",status, id);
+        employeeService.changeStatus(status,id);
+        return Result.success();
     }
 }
