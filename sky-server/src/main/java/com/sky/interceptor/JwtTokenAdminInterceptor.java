@@ -5,6 +5,7 @@ import com.sky.context.BaseContext;
 import com.sky.entity.Employee;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.properties.JwtProperties;
+import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,9 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
     private JwtProperties jwtProperties;
     @Autowired
     private EmployeeMapper employeeMapper;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     /**
      * 校验jwt
@@ -52,9 +56,14 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
             log.info("当前员工id：{}", empId);
-            //根据员工id查询员工#TODO 需要写了根据id查询员工才能实现
-
+            //根据员工id查询员工
+           Employee employe= employeeService.queryById(empId);
             //判断当前员工状态是否为禁用
+            if(employe==null||employe.getStatus()==0){
+                //员工不存在或禁用
+                response.setStatus(401);
+                return false;
+            }
             //保存当前员工id到ThreadLocal
             BaseContext.setCurrentId(empId);
             //3、通过，放行
